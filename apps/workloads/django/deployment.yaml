@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: django
+  namespace: django
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: django
+
+  template:
+    metadata:
+      labels:
+        app: django
+
+    spec:
+      containers:
+        - name: django
+          image: python:3.12-slim
+
+          command:
+            - /bin/sh
+            - -c
+
+          args:
+            - |
+              pip install --no-cache-dir django &&
+              mkdir -p /app &&
+              django-admin startproject mysite /app &&
+              sed -i "s/ALLOWED_HOSTS = \\[\\]/ALLOWED_HOSTS = ['*']/" /app/mysite/settings.py &&
+              cd /app &&
+              python manage.py runserver 0.0.0.0:8000
+
+          ports:
+            - containerPort: 8000
