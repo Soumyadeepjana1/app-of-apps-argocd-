@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: root-app
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Soumyadeepjana1/argocd-gitops.git 
+    targetRevision: master
+    path: 05_argocd_features/app_of_apps/root_app.yml
+
+  destination:
+    server: https://192.168.49.2:8443 
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
